@@ -14,7 +14,7 @@ from pathlib import Path
 import os, json
 from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
-
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,23 +23,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-secret_file = os.path.join(BASE_DIR, 'secrets.json')  # secrets.json 파일 위치 명시
+# secret_file = os.path.join(BASE_DIR, 'secrets.json')  # secrets.json 파일 위치 명시
 
-with open(secret_file) as f:
-    secrets = json.loads(f.read())
+# with open(secret_file) as f:
+#     secrets = json.loads(f.read())
 
 
-def get_secret(setting):
-    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
-    try:
-        return secrets[setting]
-    except KeyError:
-        error_msg = f"Set the {setting} environment variable"
-        raise ImproperlyConfigured(error_msg)
+# def get_secret(setting):
+#     """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
+#     try:
+#         return secrets[setting]
+#     except KeyError:
+#         error_msg = f"Set the {setting} environment variable"
+#         raise ImproperlyConfigured(error_msg)
 # heroku배포 참고: https://eunjin3786.tistory.com/244
 # SECRET_KEY = get_secret("SECRET_KEY")
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', get_secret("SECRET_KEY"))
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "django-insecure-ageps9g1*oesnqqs@93q!8fvxruzpyvl--+bp$ysme$a*fm%qd")
+# https://stackoverflow.com/questions/47949022/git-heroku-how-to-hide-my-secret-key
+# => os.getenv('DJANGO_SECRET_KEY', get_secret("SECRET_KEY"))
+
 # SECURITY WARNING: don't run with debug turned on in production!
+
 
 # DEBUG = True
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
@@ -72,6 +76,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+django_heroku(locals())
 
 ROOT_URLCONF = 'youthmarket.urls'
 
